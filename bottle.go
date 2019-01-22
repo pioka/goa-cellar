@@ -1,8 +1,10 @@
 package main
 
 import (
-	"github.com/goadesign/goa"
+	"fmt"
 	"goa-cellar/app"
+
+	"github.com/goadesign/goa"
 )
 
 // BottleController implements the bottle resource.
@@ -18,10 +20,18 @@ func NewBottleController(service *goa.Service) *BottleController {
 // Show runs the show action.
 func (c *BottleController) Show(ctx *app.ShowBottleContext) error {
 	// BottleController_Show: start_implement
+	// IDに0が指定されたらNotFound返すようにしてみる
+	if ctx.BottleID == 0 {
+		return ctx.NotFound()
+	}
 
-	// Put your logic here
+	// レスポンスデータ
+	bottle := app.GoaExampleBottle{
+		ID:   ctx.BottleID,
+		Name: fmt.Sprintf("Bottle #%d", ctx.BottleID),
+		Href: app.BottleHref(ctx.BottleID),
+	}
 
-	res := &app.GoaExampleBottle{}
-	return ctx.OK(res)
+	return ctx.OK(&bottle)
 	// BottleController_Show: end_implement
 }
